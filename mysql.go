@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
 	"time"
@@ -44,6 +45,18 @@ func (mysql) SqlTag(value reflect.Value, size int, autoIncrease bool) string {
 	case reflect.Struct:
 		if _, ok := value.Interface().(time.Time); ok {
 			return "timestamp NULL"
+		}
+		if _, ok := value.Interface().(sql.NullInt64); ok {
+			return "int AUTO_INCREMENT"
+		}
+		if _, ok := value.Interface().(sql.NullString); ok {
+			if size > 0 && size < 65532 {
+				return fmt.Sprintf("varchar(%d)", size)
+			}
+			return "longtext"
+		}
+		if _, ok := value.Interface().(sql.NullBool); ok {
+			return "boolean"
 		}
 	default:
 		if _, ok := value.Interface().([]byte); ok {
