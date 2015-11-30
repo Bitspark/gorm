@@ -47,7 +47,10 @@ func (mysql) SqlTag(value reflect.Value, size int, autoIncrease bool) string {
 			return "timestamp NULL"
 		}
 		if _, ok := value.Interface().(sql.NullInt64); ok {
-			return "int AUTO_INCREMENT"
+			if autoIncrease {
+				return "int AUTO_INCREMENT"
+			}
+			return "int"
 		}
 		if _, ok := value.Interface().(sql.NullString); ok {
 			if size > 0 && size < 65532 {
