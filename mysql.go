@@ -46,6 +46,9 @@ func (mysql) SqlTag(value reflect.Value, size int, autoIncrease bool) string {
 		if _, ok := value.Interface().(time.Time); ok {
 			return "timestamp NULL"
 		}
+		if _, ok := value.Interface().(mysql.NullTime); ok {
+			return "timestamp NULL"
+		}
 		if _, ok := value.Interface().(sql.NullInt64); ok {
 			if autoIncrease {
 				return "int AUTO_INCREMENT"
